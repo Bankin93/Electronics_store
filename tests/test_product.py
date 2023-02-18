@@ -2,6 +2,14 @@ import pytest
 from Product.Product import Product
 
 
+def test_instantiate_from_csv():
+    Product.instantiate_from_csv('test.csv')
+    assert len(Product.product_list) == 5
+    assert Product.product_list[3].name == "Мышка"
+    assert Product.product_list[2].price == 10
+    assert Product.product_list[0].quantity == 1
+
+
 @pytest.mark.parametrize(
     "name, price, quantity, result",
     [("Смартфон", 10000, 20, 200000), ("Ноутбук", 20000, 5, 100000)]
@@ -20,3 +28,19 @@ def test_apply_discount(name, price, quantity, result):
     item = Product(name, price, quantity)
     assert item.price == price
     assert item.apply_discount() == result
+
+
+@pytest.fixture()
+def product_name():
+    return Product.product_list
+
+
+def test_name(product_name):
+    with pytest.raises(Exception):
+        product_name.name = 'Длина наименования товара превышает 10 символов.'
+
+
+def test_is_integer():
+    assert Product.is_integer(5) is True
+    assert Product.is_integer(5.0) is True
+    assert Product.is_integer(5.5) is False
