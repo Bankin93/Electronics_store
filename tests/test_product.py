@@ -1,5 +1,5 @@
 import pytest
-from Product.Product import Product
+from Product.product import Product
 
 
 def test_instantiate_from_csv():
@@ -8,6 +8,20 @@ def test_instantiate_from_csv():
     assert Product.product_list[3].name == "Мышка"
     assert Product.product_list[2].price == 10
     assert Product.product_list[0].quantity == 1
+
+
+@pytest.fixture()
+def item_class():
+    item = Product("Смартфон", 10000, 20)
+    return item
+
+
+def test_repr(item_class):
+    assert repr(item_class) == "Product('Смартфон', 10000, 20)"
+
+
+def test_str(item_class):
+    assert str(item_class) == "Смартфон"
 
 
 @pytest.mark.parametrize(
