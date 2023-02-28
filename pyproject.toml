@@ -1,14 +1,12 @@
 [tool.poetry]
-name = "electronics-store"
+name = "poetry"
 version = "0.1.0"
 description = ""
-authors = ["Bankin93 <igorkonov1993@gmail.com>"]
+authors = ["Your Name <you@example.com>"]
 readme = "README.md"
-packages = [{include = "electronics_store"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
-pytest-cov = "^4.0.0"
 
 
 [tool.poetry.group.dev.dependencies]
