@@ -10,7 +10,6 @@ class Product:
         self.__name = name
         self.price = price
         self.quantity = quantity
-        self.product_list.append(self)
 
     def __repr__(self):
         return f"{self.__class__.__name__}('{self.__name}', {self.price}, {self.quantity})"
@@ -40,17 +39,12 @@ class Product:
         self.price = self.price * self.discount
         return self.price
 
-    @classmethod
-    def instantiate_from_csv(cls, path: str) -> None:
-        """Считывает данные из csv файло и создает экземпляры класса"""
-        with open(path) as file:
-            csv_file = csv.DictReader(file)
-            for row in csv_file:
-                cls(
-                    name=row['name'],
-                    price=float(row['price']),
-                    quantity=int(row['quantity'])
-                )
+    def __add__(self, other):
+        """Сложение по количеству товара в магазине"""
+        if isinstance(other, Product):
+            return self.quantity + other.quantity
+        else:
+            raise ValueError('С объектами других классов сложение запрещено')
 
     @staticmethod
     def is_integer(num) -> bool:
@@ -59,3 +53,42 @@ class Product:
             return True
         else:
             return False
+
+    @classmethod
+    def instantiate_from_csv(cls, path: str) -> None:
+        """Считывает данные из csv файла и создает экземпляры класса"""
+        with open(path, "r") as file:
+            csv_file = csv.DictReader(file)
+            for row in csv_file:
+                item = cls(
+                    name=row['name'],
+                    price=float(row['price']),
+                    quantity=int(row['quantity'])
+                )
+                cls.product_list.append(item)
+
+
+class Phone(Product):
+    """Класс Phone, наследуемый от базового Product"""
+    def __init__(self, name, price, quantity, number_of_sim):
+        super().__init__(name, price, quantity)
+        self.__number_of_sim = number_of_sim
+
+    def __repr__(self):
+        return f"{super().__repr__().replace(')', ',')} {self.number_of_sim})"
+
+    def __str__(self):
+        return super().__str__()
+
+    @property
+    def number_of_sim(self) -> int:
+        """Возвращаем кол-во сим-карт"""
+        return self.__number_of_sim
+
+    @number_of_sim.setter
+    def number_of_sim(self, number_of_sim: int) -> None:
+        """Обновляет количество сим-карт и выбрасывает исключение"""
+        if number_of_sim > 0:
+            self.__number_of_sim = number_of_sim
+        else:
+            raise Exception('Количество физических SIM-карт должно быть целым числом больше нуля.')
