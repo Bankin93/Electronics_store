@@ -92,3 +92,30 @@ class Phone(Product):
             self.__number_of_sim = number_of_sim
         else:
             raise Exception('Количество физических SIM-карт должно быть целым числом больше нуля.')
+
+
+class MixinLog:
+    """Отдельный класс-миксин, который “подмешивает"
+    функционал по хранению и изменению раскладки клавиатуры
+     в цепочку наследования класса Keyboard """
+    def __init__(self, *args):
+        self._language = "EN"
+        super().__init__(*args)
+
+    @property
+    def language(self):
+        return self._language
+
+    def change_lang(self):
+        """Метод для изменения языка"""
+        if self._language == "RU":
+            self._language = "EN"
+        else:
+            self._language = "RU"
+
+
+class Keyboard(MixinLog, Product):
+    """Класс товара "клавиатура",
+    наследуемый от родительского класса Product
+    и дополнительного отдельного класса MixinLog"""
+    pass
