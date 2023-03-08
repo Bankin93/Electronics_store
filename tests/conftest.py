@@ -1,6 +1,12 @@
-import pytest
-from Product.product import Product, Phone, Keyboard
+import os
 
+import pytest
+from product.product import Product, Phone, Keyboard
+
+@pytest.fixture()
+def test_file():
+    test_file = os.path.join("csv_files/test.csv")
+    return test_file
 
 @pytest.fixture()
 def item_class():
@@ -18,3 +24,16 @@ def phone_class():
 def keyboard_class():
     kb = Keyboard('Dark Project KD87A', 9600, 5)
     return kb
+
+
+@pytest.fixture()
+def error_file():
+    error_file = os.path.join("csv_files/error.csv")
+    return error_file
+
+
+@pytest.fixture()
+def missing_file():
+    missing_file = os.path.join("missing.csv")
+    return missing_file
+

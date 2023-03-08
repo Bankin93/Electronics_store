@@ -1,15 +1,17 @@
 import csv
+from product.exeption import InstantiateCSVError
 
 
 class Product:
     """Базовый класс товара"""
-    discount = 0.85
-    product_list = []
+    discount: float = 0.85
+    product_list: list = []
 
     def __init__(self, name, price, quantity):
         self.__name = name
         self.price = price
         self.quantity = quantity
+        self.product_list.append(self)
 
     def __repr__(self):
         return f"{self.__class__.__name__}('{self.__name}', {self.price}, {self.quantity})"
@@ -55,21 +57,24 @@ class Product:
             return False
 
     @classmethod
-    def instantiate_from_csv(cls, path: str) -> None:
+    def instantiate_from_csv(cls, path: str) -> str:  # type: ignore
         """Считывает данные из csv файла и создает экземпляры класса"""
-        with open(path, "r") as file:
-            csv_file = csv.DictReader(file)
-            for row in csv_file:
-                item = cls(
-                    name=row['name'],
-                    price=float(row['price']),
-                    quantity=int(row['quantity'])
-                )
-                cls.product_list.append(item)
+        try:
+            with open(path, "r") as file:
+                csv_file = csv.DictReader(file)
+                for row in csv_file:
+                    if list(row.keys()) == ['name', 'price', 'quantity']:
+                        cls(name=row['name'], price=float(row['price']), quantity=int(row['quantity']))
+                    else:
+                        raise InstantiateCSVError
+        except FileNotFoundError:
+            return f'Отсутствует файл {path}'
+        except InstantiateCSVError:
+            return f'Файл {path} поврежден'
 
 
 class Phone(Product):
-    """Класс Phone, наследуемый от базового Product"""
+    """Класс Phone, наследуемый от базового product"""
     def __init__(self, name, price, quantity, number_of_sim):
         super().__init__(name, price, quantity)
         self.__number_of_sim = number_of_sim
@@ -116,6 +121,6 @@ class MixinLog:
 
 class Keyboard(MixinLog, Product):
     """Класс товара "клавиатура",
-    наследуемый от родительского класса Product
+    наследуемый от родительского класса product
     и дополнительного отдельного класса MixinLog"""
     pass
