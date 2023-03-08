@@ -1,11 +1,10 @@
 import pytest
-import os
-from Product.product import Product
+from product.exeption import InstantiateCSVError
+from product.product import Product
 
 
-def test_instantiate_from_csv():
-    path = os.path.abspath("tests\\test.csv")
-    Product.instantiate_from_csv(path=path)
+def test_instantiate_from_csv(test_file):
+    Product.instantiate_from_csv(path=test_file)
     product_1 = Product.product_list[0]
     product_2 = Product.product_list[1]
     product_3 = Product.product_list[2]
@@ -16,6 +15,14 @@ def test_instantiate_from_csv():
     assert product_3.price == 10.0
     assert product_1.quantity == 1
     assert product_2.name == "Геймпад"
+
+
+def test_instantiate_from_csv_missing(missing_file):
+    assert Product.instantiate_from_csv(path=missing_file) == f'Отсутствует файл {missing_file}'
+
+
+def test_instantiate_from_csv_error(error_file):
+    assert Product.instantiate_from_csv(path=error_file) == f'Файл {error_file} поврежден'
 
 
 def test_repr(item_class):
@@ -47,3 +54,8 @@ def test_apply_discount(item_class):
     Product.discount = 0.8
     assert item_class.price == 10000
     assert item_class.apply_discount() == 8000.0
+
+
+def test_instantiate_csv_error():
+    e = InstantiateCSVError()
+    assert (str(e)) == "Неизвестная ошибка"
